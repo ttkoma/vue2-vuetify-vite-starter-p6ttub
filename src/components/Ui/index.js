@@ -1,2 +1,3 @@
-export { default as PageContainer } from "./PageContainer.vue"
-export { default as ResponsiveFooter } from "./ResponsiveFooter.vue"
+export { default as TheCard } from "./TheCard.vue"
+export { default as TheFooter } from "./TheFooter.vue"
+export { default as TheContainer } from "./TheContainer.vue"

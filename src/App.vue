@@ -1,14 +1,17 @@
 <template>
   <v-app id="app">
     <v-main class="grey lighten-2">
-      <PageContainer>
-        <TheNote v-for="(item, i) in state" :key="i" :id="`note-${i}`" v-bind="item" @remove="removeItem(i)" />
-      </PageContainer>
+      <TheContainer class='py-1 '>
+        <div v-for="(item, i) in state" :key="i" class='my-2'>
+          <TheNote :id="`note-${i}`" v-bind="item" @remove="removeItem(i)" />
+        </div>
+
+      </TheContainer>
     </v-main>
 
-    <ResponsiveFooter @change="scrollToLastNote" app dark>
+    <TheFooter @change="scrollToLastNote" app dark>
       <NoteInput @input="onNoteInput" dark />
-    </ResponsiveFooter>
+    </TheFooter>
   </v-app>
 </template>
 
@@ -16,7 +19,7 @@
 import { TheNote, NoteInput } from "./components/Note"
 import { computed, nextTick, provide, ref } from "vue"
 import { useVuetify } from "./composables/useVuetify"
-import { PageContainer, ResponsiveFooter } from "./components/Ui"
+import { TheContainer, TheFooter } from "./components/Ui"
 import { notesMock } from "./mocks/notes"
 
 const state = ref([...notesMock, ...notesMock])

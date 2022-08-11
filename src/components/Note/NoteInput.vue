@@ -1,34 +1,37 @@
 <template>
-  <v-textarea
-    v-model="noteModel.text"
-    append-outer-icon="mdi-send"
-    auto-grow
-    class="text-body-2"
-    color="green"
-    dense
-    flat
-    hide-details
-    placeholder="Начните писать"
-    prepend-icon="mdi-attachment"
-    row-height="1"
-    solo-inverted
-    style="line-height: 12px"
-    @focusin="toggleFocused"
-    @focusout="toggleFocused"
-    @click:prepend="onClickAttachment"
-    @click:append-outer="onSend"
-    @keydown.ctrl.enter="onSend"
-  >
-    <template #prepend-inner>
-      <v-icon :color="importantIconColor" @click="toggleImportant" left>mdi-alert-circle-outline</v-icon>
-    </template>
-  </v-textarea>
+
+      <v-textarea
+        v-model="noteModel.text"
+        append-outer-icon="mdi-send"
+        auto-grow
+        class="text-body-2"
+        color="green"
+        dense
+        flat
+        hide-details
+        full-width
+        placeholder="Начните писать"
+        prepend-icon="mdi-attachment"
+        :rows='isDesktop + 1'
+        :row-height="28"
+        solo-inverted
+        dark
+
+        @focusin="toggleFocused"
+        @focusout="toggleFocused"
+        @click:prepend="onClickAttachment"
+        @click:append-outer="onSend"
+        @keydown.ctrl.enter="onSend"
+      >
+        <template #prepend-inner>
+          <v-icon :color="importantIconColor" @click="toggleImportant" left>mdi-alert-circle-outline</v-icon>
+        </template>
+      </v-textarea>
+
 </template>
 
 <script setup>
-import { computed, ref, inject, reactive } from "vue"
-
-const isDesktop = inject("isDesktop")
+import { computed, ref, reactive, inject } from 'vue'
 
 const emit = defineEmits(["input"])
 
@@ -39,6 +42,7 @@ const noteModel = reactive({
   hasFile: false,
 })
 
+const isDesktop = inject("isDesktop")
 const isFocused = ref(false)
 
 /* computed */
@@ -47,7 +51,7 @@ const importantIconColor = computed(() => {
     return noteModel.isImportant ? "warning" : "grey"
   }
 
-  return noteModel.isImportant ? "warning lighten-2" : "white"
+  return noteModel.isImportant ? "warning lighten-2" : "grey"
 })
 
 /* methods */
