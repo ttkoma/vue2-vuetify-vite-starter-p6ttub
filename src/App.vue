@@ -28,8 +28,8 @@ provide("isDesktop", isDesktop)
 
 const scrollToLastNote = () => {
   const scrolOptions = {
-    duration: 1000,
-    offset: 500,
+    duration: 1500,
+    offset: 0,
     easing: "easeInOutQuad",
   }
 
