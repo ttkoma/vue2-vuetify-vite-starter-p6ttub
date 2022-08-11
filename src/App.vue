@@ -1,30 +1,72 @@
 <template>
-  <v-app id="app">
-    <v-container>
-      <TheNote />
-    </v-container>
+  <v-app id='app'>
+    <v-main class='grey lighten-2'>
+      <PageContainer>
+        <TheNote v-for='(item,i) in state' :id='`note-${i}`' :key='i' :rounded='isDesktop' v-bind='item' />
+      </PageContainer>
+
+      <PageContainer>
+        <v-footer app dark>
+          <NoteInput @input='onNoteInput' />
+        </v-footer>
+      </PageContainer>
+    </v-main>
   </v-app>
 </template>
 
-<script>
-import { defineComponent } from '@vue/composition-api'
+<script setup>
 import TheNote from './components/Note/TheNote.vue'
+import NoteInput from './components/Note/NoteInput.vue'
+import { computed, nextTick, provide, ref } from 'vue'
+import { useVuetify } from './composables/useVuetify'
+import { PageContainer } from './components/Ui'
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    TheNote,
+const state = ref([
+
+  {
+  comment: 200,
+  editable: true,
+  fileSize: 30,
+  important: true
+},
+  {
+    comment: 50,
+    editable: false,
+    fileSize: 0,
+    important: true
   },
-})
+  {
+    comment: 0,
+    editable: false,
+    fileSize: 58,
+    important: false
+  },
+  {
+    comment: 100,
+    editable: false,
+    fileSize: 0,
+    important: false
+  }
+])
+const { breakpoint, goTo } = useVuetify()
+const isDesktop = computed(() => breakpoint.smAndUp )
+
+const onNoteInput = (event) => {
+  state.value.push({
+    comment: event.text.length,
+    editable: true,
+    important: event.isImportant,
+    fileSize: event.file ? 30 : 0
+  })
+
+  // После добавления елемента в DOM прокрутим окно до него
+  nextTick(() => {
+    goTo(`#note-${state.value.length - 1}`)
+  })
+}
+
+provide("isDesktop", isDesktop)
+
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+
