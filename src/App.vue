@@ -2,34 +2,38 @@
   <v-app id="app">
     <v-main class="grey lighten-2">
       <PageContainer>
-        <TheNote v-for="(item, i) in state" :id="`note-${i}`" :key="i" v-bind="item" />
+        <TheNote v-for="(item, i) in state" :key="i" :id="`note-${i}`" v-bind="item" @remove="removeItem(i)" />
       </PageContainer>
     </v-main>
 
-    <v-footer ref="footerRef" app dark>
-      <NoteInput @input="onNoteInput" />
-    </v-footer>
+    <ResponsiveFooter @change="scrollToLastNote" app dark>
+      <NoteInput @input="onNoteInput" dark />
+    </ResponsiveFooter>
   </v-app>
 </template>
 
 <script setup>
-import TheNote from "./components/Note/TheNote.vue"
-import NoteInput from "./components/Note/NoteInput.vue"
-import { computed, nextTick, provide, ref, onMounted } from "vue"
+import { TheNote, NoteInput } from "./components/Note"
+import { computed, nextTick, provide, ref } from "vue"
 import { useVuetify } from "./composables/useVuetify"
-import { PageContainer } from "./components/Ui"
+import { PageContainer, ResponsiveFooter } from "./components/Ui"
 import { notesMock } from "./mocks/notes"
-import * as easings from "vuetify/lib/services/goto/easing-patterns"
 
 const state = ref([...notesMock, ...notesMock])
 const vuetify = useVuetify()
+
+// Делаем свойство доступным во всех дочерних компонентах (inject)
 const isDesktop = computed(() => vuetify.breakpoint.smAndUp)
 provide("isDesktop", isDesktop)
 
-const scrolOptions = {
-  duration: 1000,
-  offset: 500,
-  easing: "easeInOutQuad",
+const scrollToLastNote = () => {
+  const scrolOptions = {
+    duration: 1000,
+    offset: 500,
+    easing: "easeInOutQuad",
+  }
+
+  vuetify.goTo(`#note-${state.value.length - 1}`, scrolOptions)
 }
 
 const onNoteInput = (event) => {
@@ -40,31 +44,13 @@ const onNoteInput = (event) => {
     fileSize: event.file ? 30 : 0,
   })
 
-  // После добавления элемента в DOM прокрутим окно до него
+  // Прокрутим окно до последнего сообщения, НО ТОЛЬКО ПОСЛЕ отрисовки элемента в DOM
   nextTick(() => {
-    vuetify.goTo(`#note-${state.value.length - 1}`, scrolOptions)
+    scrollToLastNote()
   })
 }
 
-// Ссылка на компонент Footera
-const footerRef = ref()
-
-// Следим за высотой футера
-// И Обновляем application.footer - для правильного вычисления высоты v-main контейнера
-// + плюс при изменении высоты, прокручиваем список до последнего элемента
-function observeFooterHeight() {
-  const resizeObserver = new ResizeObserver(function (entries) {
-    console.log("Size changed", entries[0].target.clientHeight)
-
-    vuetify.application.footer = entries[0].target.clientHeight
-
-    vuetify.goTo(`#note-${state.value.length - 1}`, scrolOptions)
-  })
-
-  resizeObserver.observe(footerRef.value.$el)
+const removeItem = (index) => {
+  state.value.splice(index, 1)
 }
-
-// Запускаем отслеживание высоты
-// ТОЛЬКО после монтирования, иначе footerRef.value будет = undefined
-onMounted(() => observeFooterHeight())
 </script>

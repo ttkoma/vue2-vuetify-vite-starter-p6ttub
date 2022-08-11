@@ -31,7 +31,7 @@
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
 
-            <v-btn color="blue-grey lighten-2" icon small>
+            <v-btn color="blue-grey lighten-2" icon small @click="onRemove">
               <v-icon>mdi-trash-can-outline</v-icon>
             </v-btn>
           </template>
@@ -74,14 +74,7 @@
 
 <script setup>
 import { inject } from "vue"
-
 const isDesktop = inject("isDesktop")
-
-const loremText =
-  "Lorem ipsum dolor sit amet, consectetur adipisicing elit. " +
-  "Aspernatur consectetur dignissimos hic iure minus nam obcaecati temporibus unde. " +
-  "Accusamus aliquid aperiam ducimus eligendi fuga hic illo, ipsa minima molestias neque nesciunt nobis repellat soluta tenetur voluptates? " +
-  "Culpa deleniti eligendi esse explicabo fugit harum maiores necessitatibus qui quos, ratione, sit ullam.\n"
 
 defineProps({
   comment: {
@@ -100,7 +93,15 @@ defineProps({
     type: Boolean,
   },
 })
+const emit = defineEmits(["remove"])
+
+const loremText =
+  "Lorem ipsum dolor sit amet, consectetur adipisicing elit. " +
+  "Aspernatur consectetur dignissimos hic iure minus nam obcaecati temporibus unde. " +
+  "Accusamus aliquid aperiam ducimus eligendi fuga hic illo, ipsa minima molestias neque nesciunt nobis repellat soluta tenetur voluptates? " +
+  "Culpa deleniti eligendi esse explicabo fugit harum maiores necessitatibus qui quos, ratione, sit ullam.\n"
 
 const lorem = (length) => loremText.substring(0, length)
 const onClickDownload = () => alert("Скачиваем")
+const onRemove = () => emit("remove")
 </script>
